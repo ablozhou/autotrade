@@ -28,7 +28,7 @@ class AsyncTestA:
     async def depth_poller(self):
         self.session = aiohttp.ClientSession()
         async with self.session.get(
-                "https://api.kucoin.com/v1/open/orders",
+                "https://api.kucoin.com/api/v1/orders",
                 params={
                     "symbol": "USE-ETH",
                     "limit": 100
@@ -36,9 +36,20 @@ class AsyncTestA:
             msg = await response.json()
             pprint(msg)
 
+    async def get_symbols(self):
+        self.session = aiohttp.ClientSession()
+        async with self.session.get(
+                "https://api.kucoin.com/api/v1/symbols",
+                params={
+                    "limit": 100
+                },
+                verify_ssl=False,
+                proxy="http://127.0.0.1:1087"
+                ) as response:
+            msg = await response.json()
+            pprint(msg)
     def starter(self):
-
-        asyncio.run_coroutine_threadsafe(self.depth_poller(),
+        asyncio.run_coroutine_threadsafe(self.get_symbols(),#self.depth_poller(),
                                          self.__async_loop_A)
 
         while True:
